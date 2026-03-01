@@ -4,5 +4,4 @@
 #include <random>
 #include "../shapes/Shape.h"
 
-extern bool isClearing;
 Shape *SpawnShape();

@@ -1,8 +1,7 @@
 #include "Shape.h"
 #include "../core/Board.h"
-#include "../core/Board.h"
 
-Shape::Shape(int s, Color c) : size(s), color(c)
+Shape::Shape(int s, Color c) : size(s), isLocked(false), color(c)
 {
     posX = gridCols / 2 - 1;
     posY = 0;
@@ -191,7 +190,14 @@ void Shape::LockToBoard()
         {
             if (matrix[r][c] == 1)
             {
-                board[posY + r][posX + c] = color;
+                int boardY = posY + r;
+                int boardX = posX + c;
+                if (boardX < 0 || boardX >= gridCols || boardY < 0 || boardY >= gridRows)
+                {
+                    // either continue or handle as a top-of-screen lock -> gameOver
+                    continue;
+                }
+                board[boardY][boardX] = color;
             }
         }
     }

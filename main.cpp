@@ -47,6 +47,8 @@ int main()
         EndDrawing();
     }
 
+    delete currentShape;
+    delete nextShape;
     CloseWindow();
     return 0;
 }
