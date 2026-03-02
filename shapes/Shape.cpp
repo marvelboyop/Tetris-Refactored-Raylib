@@ -10,6 +10,29 @@ Shape::Shape(int s, Color c) : size(s), isLocked(false), color(c)
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
             matrix[i][j] = 0;
+
+    int topOffset = 0;
+
+    for (int r = 0; r < size; r++)
+    {
+        bool empty = true;
+
+        for (int c = 0; c < size; c++)
+        {
+            if (matrix[r][c] == 1)
+            {
+                empty = false;
+                break;
+            }
+        }
+
+        if (!empty)
+            break;
+
+        topOffset++;
+    }
+
+    posY = -topOffset;
 }
 
 // ---------- DRAW ----------
@@ -101,7 +124,9 @@ bool Shape::CanMoveRight()
                     return false;
 
                 // Hit another block
-                if (board[posY + r][nextCol].a != 0)
+                int boardY = posY + r;
+
+                if (boardY >= 0 && board[boardY][nextCol].a != 0)
                     return false;
             }
         }
@@ -125,7 +150,9 @@ bool Shape::CanMoveLeft()
                     return false;
 
                 // Hit another block
-                if (board[posY + r][nextCol].a != 0)
+                int boardY = posY + r;
+
+                if (boardY >= 0 && board[boardY][nextCol].a != 0)
                     return false;
             }
         }
@@ -144,20 +171,22 @@ bool Shape::CanRotate(int temp[4][4])
                 int boardX = posX + c;
                 int boardY = posY + r;
 
-                // Out of bounds
-                if (boardX < 0 || boardX >= gridCols ||
-                    boardY < 0 || boardY >= gridRows)
+                // Horizontal bounds must always be valid
+                if (boardX < 0 || boardX >= gridCols)
                     return false;
 
-                // Hit locked block
-                if (board[boardY][boardX].a != 0)
+                // Cannot rotate below bottom
+                if (boardY >= gridRows)
+                    return false;
+
+                // Only check collision if inside visible grid
+                if (boardY >= 0 && board[boardY][boardX].a != 0)
                     return false;
             }
         }
     }
     return true;
 }
-
 //======================= rotate =============================
 void Shape::Rotate()
 {
@@ -181,7 +210,7 @@ void Shape::Rotate()
     }
 }
 
-// Draw the shape to board when it touches the ground
+// Draw the shape to board when it touches the ground or another peice
 void Shape::LockToBoard()
 {
     for (int r = 0; r < size; r++)
@@ -192,11 +221,14 @@ void Shape::LockToBoard()
             {
                 int boardY = posY + r;
                 int boardX = posX + c;
-                if (boardX < 0 || boardX >= gridCols || boardY < 0 || boardY >= gridRows)
+
+                // If any block locks above the visible grid
+                if (boardY < 0)
                 {
-                    // either continue or handle as a top-of-screen lock -> gameOver
+                    gameOver = true;
                     continue;
                 }
+
                 board[boardY][boardX] = color;
             }
         }
@@ -219,7 +251,7 @@ bool Shape::CanMoveDown()
                     return false;
 
                 // (Later) hit another block
-                if (board[nextRow][posX + c].a != 0)
+                if (nextRow >= 0 && board[nextRow][posX + c].a != 0)
                     return false;
             }
         }
@@ -239,13 +271,16 @@ bool CanSpawn(Shape *shape)
                 int boardX = shape->posX + c;
                 int boardY = shape->posY + r;
 
-                // Outside board (should not happen, but safe)
-                if (boardY < 0 || boardY >= gridRows ||
-                    boardX < 0 || boardX >= gridCols)
+                // Horizontal bounds must always be valid
+                if (boardX < 0 || boardX >= gridCols)
                     return false;
 
-                // Collision with existing block
-                if (board[boardY][boardX].a != 0)
+                // Cannot spawn below board
+                if (boardY >= gridRows)
+                    return false;
+
+                // Only check collision if inside visible grid
+                if (boardY >= 0 && board[boardY][boardX].a != 0)
                     return false;
             }
         }
