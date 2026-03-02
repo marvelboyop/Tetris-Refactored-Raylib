@@ -79,10 +79,17 @@ void Shape::Update()
         {
             LockToBoard();
 
-            int lines = ClearLines();
-            score += lines * lines * 100;
+            rowsToClear = GetFullRows();
 
-            isLocked = true;
+            if (!rowsToClear.empty())
+            {
+                isClearing = true;
+                clearTimer = 0.0f;
+            }
+            else
+            {
+                isLocked = true;
+            }
         }
 
         fallTimer = 0.0f;

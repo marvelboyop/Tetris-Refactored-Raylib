@@ -25,7 +25,30 @@ int main()
         // Update
         if (!gameOver)
         {
-            currentShape->Update();
+
+            if (isClearing)
+            {
+                clearTimer += GetFrameTime();
+
+                if (clearTimer >= clearDuration)
+                {
+                    RemoveRows(rowsToClear);
+
+                    int lines = rowsToClear.size();
+                    score += lines * lines * 100;
+
+                    rowsToClear.clear();
+                    isClearing = false;
+
+                    currentShape->isLocked = true;
+                }
+
+                // Skip normal gameplay while blinking
+            }
+            else
+            {
+                currentShape->Update();
+            }
 
             if (currentShape->isLocked)
             {
@@ -42,7 +65,11 @@ int main()
         ClearBackground(BLACK);
 
         DrawBoard();
-        currentShape->Draw();
+        // to prevent drawing the currentShape when the animation is happening
+        if (!isClearing)
+        {
+            currentShape->Draw();
+        }
         DrawUI(score, nextShape, gameOver);
         EndDrawing();
     }
