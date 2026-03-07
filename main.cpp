@@ -6,6 +6,7 @@
 #include "shapes/Tetrominoes.h"
 #include "systems/Bag.h"
 #include "ui/UI.h"
+#include "systems/HighScore.h"
 #include <vector>
 #include <random>
 #include <algorithm>
@@ -16,6 +17,8 @@ int main()
 {
     InitWindow(screen_width, screen_height, "Tetris made by marvelboyop & Dwip");
     SetTargetFPS(60);
+
+    int highScore = LoadHighScore();
 
     Shape *currentShape = SpawnShape();
     Shape *nextShape = SpawnShape();
@@ -61,6 +64,12 @@ int main()
             }
         }
 
+        // update highscore live
+        if (score > highScore)
+        {
+            highScore = score;
+        }
+
         BeginDrawing();
         ClearBackground(BLACK);
 
@@ -70,12 +79,15 @@ int main()
         {
             currentShape->Draw();
         }
-        DrawUI(score, nextShape, gameOver);
+        DrawUI(score, highScore, nextShape, gameOver);
         EndDrawing();
     }
 
     delete currentShape;
     delete nextShape;
+
+    SaveHighScore(highScore);
+
     CloseWindow();
     return 0;
 }

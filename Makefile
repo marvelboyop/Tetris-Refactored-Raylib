@@ -373,7 +373,8 @@ SRC = main.cpp \
       core/Board.cpp \
       shapes/Shape.cpp \
       systems/Bag.cpp \
-      ui/UI.cpp
+      ui/UI.cpp \
+      systems/HighScore.cpp
 #OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJS ?= $(SRC)
 
