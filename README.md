@@ -89,6 +89,35 @@ future extension (sound, combo tracking, effects).
 
 ---
 
+## High Score System
+
+The game includes a simple persistent high score system using file storage.
+
+### How it works
+
+- When the game starts, the high score is loaded from `highscore.txt`.
+- During gameplay, if the player's score exceeds the current high score, the value is updated in memory immediately.
+- The UI reflects the new high score as soon as it is beaten.
+- When the game closes, the high score is saved back to the file.
+
+This approach ensures that:
+- The high score updates live during gameplay.
+- The score is preserved even if the game is closed using the **ESC key** or the **window close button**.
+- File I/O is minimized by only writing the high score once when the application exits.
+
+### File Format
+
+The high score is stored in a simple text file:
+
+```
+highscore.txt
+1500
+```
+
+Only the highest score is stored, keeping the system lightweight and easy to maintain.
+
+---
+
 ## Safety Considerations
 
 - All board writes guarded against negative indices
